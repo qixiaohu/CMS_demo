@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+
+    <!-- js 文件的加载顺序很重要 -->
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/js/easyui-lang-zh_CN.js"></script>
+    <link href="/static/css/themes/default/easyui.css" rel="stylesheet"/>
+    <link href="/static/css/themes/icon.css" rel="stylesheet"/>
+
+    <script type="text/javascript">
+        // $(function()) 函数会在所以前端界面加载完毕后才会执行，在这里面调用 loadData() 函数
+        $(function () {
+            $("#addDiv").css("display", "none");
+            loadData()
+        })
+
+        // 自定义函数
+        function loadData() {
+            // 获取 table[tt],然后在 tt 的身上绑定 datagrid 的属性
+            $('#tt').datagrid({
+                url: '/Admin/UserInfo/GetUserInfo',
+                title: '用户数据表格',
+                width: 700,
+                height: 400,
+                fitColumns: true, //列自适应
+                nowrap: false,//设置为true，当数据长度超出列宽时将会自动截取
+                idField: 'Id',//主键列的列明
+                loadMsg: '正在加载用户的信息...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize: 2,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [2, 5, 10],
+                queryParams: {},//往后台传递参数
+                columns: [[
+                    {field: 'ck', checkbox: true, align: 'left', width: 50},
+                    {field: 'Id', title: '编号', width: 80},
+                    {field: 'UserName', title: '姓名', width: 120},
+                    {field: 'UserPwd', title: '密码', width: 120},
+                    {field: 'Remark', title: '备注', width: 120},
+                    {
+                        field: 'AddDate', title: '时间', width: 80, align: 'right',
+                        formatter: function (value, row, index) {
+                            return value.split('T')[0]//对日期时间的处理
+                        }
+                    }
+                ]],
+                // 添加功能集合
+                toolbar: [{
+                    id: 'btnDelete',
+                    text: '删除',//显示的文本
+                    iconCls: 'icon-remove', //采用的样式
+                    handler: function () {	//当单击按钮时执行该方法
+                        //获取在表格中选中的行（getSelections：表示获取选中的行）
+                        var rows = $('#tt').datagrid('getSelections');
+                        if (!rows || rows.length == 0) {//判断是否选择了，如果没有选择长度为0
+                            //alert("请选择要修改的商品！");
+                            $.messager.alert("提醒", "请选择要删除的记录!", "error");
+                            return;
+                        }
+
+                    }
+                }],
+            });
+        }
+    </script>
+
+</head>
+<body>
+
+<div>
+    <table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit">
+    </table>
+</div>
+
+</body>
+</html>
